@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <title>Singing Hugo Film Access</title>
+  <meta name="description" content="Enter your unique code to access the film."/>
+  <style>
+    :root{
+      --bg:#0b0d12;
+      --fg:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.62);
+      --glass:rgba(16,18,26,.56);
+      --stroke:rgba(255,255,255,.12);
+      --stroke2:rgba(255,255,255,.22);
+      --shadow:0 30px 90px rgba(0,0,0,.55);
+      --r:22px;
+      --vh:1vh;
+      color-scheme: dark;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0; background:var(--bg); color:var(--fg); overflow:hidden}
+
+    #bg{position:fixed; inset:0; width:100%; height:100%; z-index:0; display:block}
+    .fx{position:fixed; inset:0; z-index:1; pointer-events:none;
+      background: radial-gradient(1200px 700px at 50% 30%, rgba(0,0,0,0) 0%, rgba(0,0,0,.35) 60%, rgba(0,0,0,.70) 100%);
+      opacity:.95;
+    }
+
+    header{
+      position:fixed;
+      top:max(14px, env(safe-area-inset-top));
+      left:max(14px, env(safe-area-inset-left));
+      right:max(14px, env(safe-area-inset-right));
+      z-index:3;
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      pointer-events:none;
+    }
+    .brand{
+      pointer-events:auto;
+      display:flex; gap:10px; align-items:center;
+      padding:10px 14px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background:rgba(10,12,18,.35);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 12px 40px rgba(0,0,0,.28);
+      user-select:none;
+    }
+    .dot{width:10px; height:10px; border-radius:50%; background:rgba(255,255,255,.75); box-shadow:0 0 0 4px rgba(255,255,255,.10)}
+    .brand b{font-weight:720}
+    .brand span{display:block; color:var(--muted); font-size:12px; margin-top:2px}
+    .pill{
+      pointer-events:auto;
+      border:1px solid var(--stroke);
+      background:rgba(10,12,18,.35);
+      color:var(--fg);
+      border-radius:999px;
+      padding:10px 14px;
+      font-size:13px;
+      text-decoration:none;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 12px 40px rgba(0,0,0,.22);
+      user-select:none;
+    }
+    .pill:hover{border-color:var(--stroke2)}
+
+    main{
+      position:relative; z-index:2;
+      height:calc(var(--vh)*100);
+      display:grid; place-items:center;
+      padding:max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+    }
+    .card{
+      width:min(980px, 96vw);
+      border-radius:var(--r);
+      background: linear-gradient(180deg, var(--glass), rgba(16,18,26,.32));
+      border:1px solid var(--stroke);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      overflow:hidden;
+    }
+    .top{
+      padding:22px 22px 14px;
+      display:flex; align-items:flex-start; justify-content:space-between; gap:14px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0));
+    }
+    h1{margin:0; font-size: clamp(20px, 3vw, 30px); font-weight:740; line-height:1.1}
+    .sub{margin-top:8px; color:var(--muted); font-size:14px; line-height:1.35; max-width:60ch}
+    .body{padding:18px 22px 22px}
+    label{display:block; margin:10px 0 6px; color:var(--muted); font-size:12px; letter-spacing:.2px}
+    input{
+      width:100%;
+      font:inherit;
+      color:var(--fg);
+      background: rgba(8,10,14,.48);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:14px;
+      padding:14px 14px;
+      outline:none;
+      transition: border-color .18s ease, transform .18s ease, background .18s ease;
+    }
+    input:focus{border-color:rgba(255,255,255,.28); background:rgba(8,10,14,.60); transform: translateY(-1px)}
+    .row{display:flex; gap:10px; align-items:stretch; flex-wrap:wrap}
+    button{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.10);
+      color:var(--fg);
+      border-radius:14px;
+      padding:12px 14px;
+      font-weight:700;
+      cursor:pointer;
+      transition: transform .14s ease, border-color .18s ease, background .18s ease;
+      user-select:none;
+    }
+    button:hover{border-color:rgba(255,255,255,.26); background:rgba(255,255,255,.14)}
+    button:active{transform: translateY(1px) scale(.99)}
+    button[disabled]{opacity:.55; cursor:not-allowed}
+
+    .note{color:var(--muted); font-size:12px; margin-top:10px; line-height:1.35}
+    .note a{color:rgba(255,255,255,.78); text-decoration:none; border-bottom:1px solid rgba(255,255,255,.18)}
+    .note a:hover{border-bottom-color:rgba(255,255,255,.35)}
+
+    .videoWrap{
+      display:none;
+      margin-top:16px;
+      border-top:1px solid rgba(255,255,255,.08);
+      padding-top:16px;
+    }
+    .video{
+      position:relative;
+      width:100%;
+      aspect-ratio:16/9;
+      border-radius: 16px;
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.35);
+    }
+    iframe{position:absolute; inset:0; width:100%; height:100%; border:0}
+    .actions{
+      margin-top:12px;
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+      justify-content:space-between;
+    }
+    .tinyStatus{
+      display:flex; align-items:center; gap:8px; color:rgba(255,255,255,.60); font-size:12px;
+    }
+    .led{width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,.45); box-shadow:0 0 0 4px rgba(255,255,255,.08)}
+    .led.ok{background: rgba(90,255,170,.80); box-shadow:0 0 0 4px rgba(90,255,170,.12)}
+    .led.bad{background: rgba(255,120,120,.85); box-shadow:0 0 0 4px rgba(255,120,120,.12)}
+
+    .foot{
+      padding:12px 22px 18px;
+      border-top:1px solid rgba(255,255,255,.08);
+      color: rgba(255,255,255,.55);
+      font-size: 12px;
+      display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;
+    }
+
+    @media (max-width: 860px){
+      .actions{flex-direction:column; align-items:stretch}
+      header{gap:10px}
+    }
+    @media (prefers-reduced-motion: reduce){
+      #bg{display:none}
+    }
+  </style>
+</head>
+<body>
+  <canvas id="bg" aria-hidden="true"></canvas>
+  <div class="fx" aria-hidden="true"></div>
+
+  <header>
+    <div class="brand">
+      <div class="dot" aria-hidden="true"></div>
+      <div>
+        <b>Singing Hugo</b>
+        <span>film access</span>
+      </div>
+    </div>
+    <a class="pill" href="https://singinghugo.com" rel="noopener">Back to main site</a>
+  </header>
+
+  <main>
+    <section class="card" role="region" aria-label="Film access">
+      <div class="top">
+        <div>
+          <h1>Welcome to SingingHugo.com</h1>
+          <div class="sub">Enter your <b>unique code</b> to unlock access.</div>
+        </div>
+      </div>
+
+      <div class="body">
+        <form id="codeForm" autocomplete="off">
+          <label for="code">Unique code</label>
+          <div class="row">
+            <div style="flex:1; min-width:220px">
+              <input id="code" name="code" placeholder="e.g. 7K2Q-9PZ4-…" inputmode="text" autocapitalize="characters" required />
+              <!-- Honeypot: bots fill this, humans don't. -->
+              <input id="website" name="website" tabindex="-1" autocomplete="off" style="position:absolute; left:-9999px; opacity:0;" />
+            </div>
+            <button id="unlockBtn" type="submit" style="min-width:140px">Unlock</button>
+          </div>
+
+          <div class="note" id="msg">
+            If you don’t have a code, you can <a href="https://singinghugo.com" rel="noopener">register / request access</a>.
+          </div>
+        </form>
+
+        <div class="videoWrap" id="videoWrap" aria-live="polite">
+          <div class="video">
+            <iframe id="player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen></iframe>
+          </div>
+
+          <div class="actions">
+            <div class="tinyStatus">
+              <span class="led ok" id="led" aria-hidden="true"></span>
+              <span id="statusText">Access granted.</span>
+            </div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap">
+              <a class="pill" href="https://singinghugo.com" rel="noopener">More info</a>
+              <button id="resetBtn" type="button">Use different code</button>
+            </div>
+          </div>
+
+          <div class="note" style="margin-top:10px">
+            Tip: if playback is blocked on mobile, tap the video once, then hit play.
+          </div>
+        </div>
+      </div>
+
+      <div class="foot">
+        <div>© Singing Hugo</div>
+        <div id="net">Ready.</div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module">
+    // ----------------------------
+    // CONFIG YOU MUST EDIT
+    // ----------------------------
+    // 1) YouTube video ID (the part after v= in a YouTube link)
+    const YOUTUBE_ID = "PASTE_YOUR_YOUTUBE_VIDEO_ID_HERE";
+
+    // 2) Google Apps Script Web App URL (deployed as Web App)
+    //    This version uses JSONP (script tag) so it works from GitHub Pages without CORS issues.
+    const VALIDATE_WEBAPP_URL = "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
+
+    // 3) Shared token (same as in Apps Script).
+    const TOKEN = "PASTE_A_TOKEN_HERE";
+
+    // ----------------------------
+    // UI helpers
+    // ----------------------------
+    const $ = (s) => document.querySelector(s);
+    const codeForm = $("#codeForm");
+    const codeEl = $("#code");
+    const unlockBtn = $("#unlockBtn");
+    const msg = $("#msg");
+    const videoWrap = $("#videoWrap");
+    const player = $("#player");
+    const resetBtn = $("#resetBtn");
+    const net = $("#net");
+    const led = $("#led");
+    const statusText = $("#statusText");
+    const honeypot = $("#website");
+
+    function setVH(){
+      document.documentElement.style.setProperty("--vh", (window.innerHeight * 0.01) + "px");
+    }
+    setVH(); window.addEventListener("resize", setVH);
+
+    function setNet(text){ net.textContent = text; }
+    function setMsg(text){ msg.textContent = text; }
+    function normalizeCode(s){
+      return (s||"")
+        .trim()
+        .toUpperCase()
+        .replace(/\s+/g,"")
+        .replace(/[^A-Z0-9\-]/g,"");
+    }
+
+    function showVideo(){
+      const src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(YOUTUBE_ID)}?rel=0&modestbranding=1&playsinline=1`;
+      player.src = src;
+      videoWrap.style.display = "block";
+      codeForm.style.display = "none";
+      setNet("Unlocked.");
+    }
+
+    function reset(){
+      player.src = "";
+      videoWrap.style.display = "none";
+      codeForm.style.display = "block";
+      codeEl.value = "";
+      setMsg("If you don’t have a code, you can register / request access on the main site.");
+      setNet("Ready.");
+      led.classList.remove("bad"); led.classList.add("ok");
+      statusText.textContent = "Ready.";
+      localStorage.removeItem("sh_filma_unlocked");
+    }
+
+    resetBtn.addEventListener("click", reset);
+
+    // Remember unlock on this device (optional convenience)
+    const remembered = localStorage.getItem("sh_filma_unlocked");
+    if(remembered === "1" && YOUTUBE_ID && !YOUTUBE_ID.includes("PASTE_")){
+      showVideo();
+    }
+
+    // ----------------------------
+    // JSONP validation (works on GitHub Pages)
+    // ----------------------------
+    function jsonp(url){
+      return new Promise((resolve, reject) => {
+        const cb = "__sh_cb_" + Math.random().toString(36).slice(2);
+        const s = document.createElement("script");
+        const timeout = setTimeout(() => { cleanup(); reject(new Error("timeout")); }, 12000);
+
+        function cleanup(){
+          clearTimeout(timeout);
+          try{ delete window[cb]; } catch(e){}
+          s.remove();
+        }
+
+        window[cb] = (data) => { cleanup(); resolve(data); };
+        s.onerror = () => { cleanup(); reject(new Error("script error")); };
+        s.src = url + (url.includes("?") ? "&" : "?") + "cb=" + cb;
+        document.head.appendChild(s);
+      });
+    }
+
+    async function validateCode(code){
+      if(!VALIDATE_WEBAPP_URL || VALIDATE_WEBAPP_URL.includes("PASTE_")) {
+        throw new Error("Validate URL not configured");
+      }
+      const url = new URL(VALIDATE_WEBAPP_URL);
+      url.searchParams.set("action", "validate");
+      url.searchParams.set("token", TOKEN);
+      url.searchParams.set("code", code);
+      url.searchParams.set("page", location.href);
+      url.searchParams.set("ua", navigator.userAgent);
+      url.searchParams.set("ts", new Date().toISOString());
+      return await jsonp(url.toString());
+    }
+
+    codeForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      // honeypot: if filled, silently block
+      if(honeypot.value && honeypot.value.trim().length){
+        setNet("Blocked.");
+        return;
+      }
+
+      const code = normalizeCode(codeEl.value);
+      if(!code){ setMsg("Enter your unique code."); return; }
+
+      if(!YOUTUBE_ID || YOUTUBE_ID.includes("PASTE_")){
+        setMsg("Admin hasn’t configured the video yet (YOUTUBE_ID missing).");
+        return;
+      }
+
+      unlockBtn.disabled = true;
+      setNet("Checking code…");
+      setMsg("Checking…");
+
+      try{
+        const res = await validateCode(code);
+        if(res && res.ok){
+          led.classList.remove("bad"); led.classList.add("ok");
+          statusText.textContent = "Access granted.";
+          setMsg("Unlocked. Enjoy the film.");
+          localStorage.setItem("sh_filma_unlocked", "1");
+          showVideo();
+        } else {
+          led.classList.remove("ok"); led.classList.add("bad");
+          statusText.textContent = "Access denied.";
+          setMsg(res && res.message ? res.message : "Invalid code. Try again.");
+          setNet("Denied.");
+        }
+      } catch(err){
+        led.classList.remove("ok"); led.classList.add("bad");
+        statusText.textContent = "Error.";
+        setMsg("Couldn’t verify right now. Try again in a minute.");
+        setNet("Network / config error.");
+      } finally {
+        unlockBtn.disabled = false;
+      }
+    });
+
+    // ----------------------------
+    // Background (Three.js + GSAP)
+    // ----------------------------
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if(!reduced){
+      const canvas = document.getElementById("bg");
+      const THREE = await import("https://unpkg.com/three@0.160.0/build/three.module.js");
+      const { gsap } = await import("https://cdn.jsdelivr.net/npm/gsap@3.12.5/index.js");
+
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true, powerPreference:"high-performance" });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.6));
+      renderer.setSize(window.innerWidth, window.innerHeight, false);
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+      function makeTex(seed){
+        const c = document.createElement("canvas");
+        c.width = 1024; c.height = 1024;
+        const ctx = c.getContext("2d");
+        let s = seed * 99991;
+        const rnd = () => (s = (s * 1664525 + 1013904223) % 4294967296) / 4294967296;
+
+        const col1 = `hsl(${Math.floor(200 + rnd()*150)}, 70%, ${Math.floor(30 + rnd()*18)}%)`;
+        const col2 = `hsl(${Math.floor( 10 + rnd()*260)}, 70%, ${Math.floor(18 + rnd()*20)}%)`;
+        const g = ctx.createLinearGradient(0,0,c.width,c.height);
+        g.addColorStop(0, col1); g.addColorStop(1, col2);
+        ctx.fillStyle = g; ctx.fillRect(0,0,c.width,c.height);
+
+        for(let i=0;i<55;i++){
+          const x=rnd()*c.width, y=rnd()*c.height, r=40+rnd()*160;
+          const gg=ctx.createRadialGradient(x,y,0,x,y,r);
+          gg.addColorStop(0, `hsla(${Math.floor(180+rnd()*220)}, 90%, 65%, ${0.10+rnd()*0.12})`);
+          gg.addColorStop(1, "rgba(0,0,0,0)");
+          ctx.fillStyle=gg; ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+        }
+
+        const tex = new THREE.CanvasTexture(c);
+        tex.minFilter = THREE.LinearFilter; tex.magFilter = THREE.LinearFilter;
+        return tex;
+      }
+
+      const slides = [makeTex(1), makeTex(2), makeTex(3), makeTex(4), makeTex(5)];
+      let idx = 0;
+
+      const uniforms = {
+        uTime: { value: 0 },
+        uMouse: { value: new THREE.Vector2(0.5,0.5) },
+        uMouseVel: { value: new THREE.Vector2(0,0) },
+        uTexA: { value: slides[0] },
+        uTexB: { value: slides[1] },
+        uMix: { value: 0.0 },
+        uAspect: { value: window.innerWidth / Math.max(1, window.innerHeight) },
+      };
+
+      const mat = new THREE.ShaderMaterial({
+        uniforms,
+        vertexShader: "varying vec2 vUv; void main(){ vUv=uv; gl_Position=vec4(position,1.0);} ",
+        fragmentShader: `
+          precision highp float;
+          varying vec2 vUv;
+          uniform float uTime, uMix, uAspect;
+          uniform vec2 uMouse, uMouseVel;
+          uniform sampler2D uTexA, uTexB;
+
+          float hash(vec2 p){ p=fract(p*vec2(123.34,345.45)); p+=dot(p,p+34.345); return fract(p.x*p.y); }
+          float noise(vec2 p){
+            vec2 i=floor(p), f=fract(p);
+            float a=hash(i), b=hash(i+vec2(1,0)), c=hash(i+vec2(0,1)), d=hash(i+vec2(1,1));
+            vec2 u=f*f*(3.0-2.0*f);
+            return mix(a,b,u.x) + (c-a)*u.y*(1.0-u.x) + (d-b)*u.x*u.y;
+          }
+          vec2 coverUv(vec2 uv, float texAspect, float screenAspect){
+            vec2 u=uv-0.5;
+            if(screenAspect>texAspect) u.x*=screenAspect/texAspect;
+            else u.y*=texAspect/screenAspect;
+            return u+0.5;
+          }
+
+          void main(){
+            vec2 uv=vUv;
+            vec2 toM=uv-uMouse;
+            float dist=length(toM);
+            float n=noise(uv*3.0 + uTime*0.08);
+
+            vec2 drift = vec2(sin(uTime*0.18 + uv.y*5.0), cos(uTime*0.16 + uv.x*4.2))*0.01;
+            vec2 warp = toM*(0.09*exp(-dist*3.0)) + drift + uMouseVel*0.02 + (n-0.5)*0.02;
+
+            vec2 cuv = coverUv(uv + warp, 1.0, uAspect);
+            vec4 a = texture2D(uTexA, cuv);
+            vec4 b = texture2D(uTexB, cuv);
+
+            float edge = smoothstep(0.15, 0.85, uMix + (n-0.5)*0.25);
+            vec4 col = mix(a,b,edge);
+
+            col.rgb = pow(col.rgb, vec3(0.92)) * 1.05;
+            float v = smoothstep(0.95, 0.2, dist);
+            col.rgb *= 0.65 + 0.35*v;
+
+            gl_FragColor = col;
+          }
+        `
+      });
+
+      scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2), mat));
+
+      const mouse = new THREE.Vector2(0.5,0.5);
+      const prev = new THREE.Vector2(0.5,0.5);
+      const vel = new THREE.Vector2(0,0);
+
+      function onPointerMove(ev){
+        const x = ev.clientX / window.innerWidth;
+        const y = 1.0 - (ev.clientY / window.innerHeight);
+        mouse.set(x,y);
+      }
+      window.addEventListener("pointermove", onPointerMove, {passive:true});
+      window.addEventListener("touchmove", (ev)=>{ if(ev.touches&&ev.touches[0]) onPointerMove(ev.touches[0]); }, {passive:true});
+
+      function nextSlide(){
+        const next = (idx+1) % slides.length;
+        uniforms.uTexA.value = slides[idx];
+        uniforms.uTexB.value = slides[next];
+        uniforms.uMix.value = 0.0;
+        idx = next;
+        gsap.to(uniforms.uMix, { value: 1.0, duration: 1.6, ease: "power2.inOut" });
+      }
+      setInterval(nextSlide, 8000);
+
+      function onResize(){
+        renderer.setSize(window.innerWidth, window.innerHeight, false);
+        uniforms.uAspect.value = window.innerWidth / Math.max(1, window.innerHeight);
+      }
+      window.addEventListener("resize", onResize);
+
+      gsap.from(".card", { y: 18, opacity: 0, duration: 0.8, ease: "power2.out" });
+      gsap.from("header .brand", { y: -10, opacity: 0, duration: 0.8, ease: "power2.out", delay: 0.08 });
+      gsap.from("header .pill", { y: -10, opacity: 0, duration: 0.8, ease: "power2.out", delay: 0.14 });
+
+      const clock = new THREE.Clock();
+      function anim(){
+        uniforms.uTime.value = clock.getElapsedTime();
+        uniforms.uMouse.value.lerp(mouse, 0.08);
+        vel.copy(uniforms.uMouse.value).sub(prev);
+        prev.copy(uniforms.uMouse.value);
+        uniforms.uMouseVel.value.lerp(vel, 0.15);
+        renderer.render(scene, camera);
+        requestAnimationFrame(anim);
+      }
+      anim();
+    }
+  </script>
+</body>
+</html>
